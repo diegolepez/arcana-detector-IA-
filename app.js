@@ -300,7 +300,7 @@ function ResultCard(mobile = false) {
       </div>
       <div class="result-content">
         <div class="result-copy">
-          <div class="score-line"><strong>${analysis.percentage}<span>%</span></strong><p>${levelText} ${Icon("info", "inline-info")}</p></div>
+          <div class="score-line"><div class="score-stack"><small>Nivel de señales</small><strong>${analysis.percentage}<span>%</span></strong></div><p>${levelText} ${Icon("info", "inline-info")}</p></div>
           <p class="result-description">${escapeHTML(analysis.description)}</p>
           <div class="result-metrics">
             <div><span class="metric-icon">${Icon("shield")}</span><p>Confianza del análisis<strong>${escapeHTML(analysis.confidence)}</strong></p></div>
@@ -664,15 +664,48 @@ async function getTextForAnalysis() {
   const pasted = state.pastedText.trim();
   if (pasted) return { text: pasted, sourceName: "Texto pegado" };
   if (!state.selectedFile) {
-    throw new Error("Pega el texto del alumno o sube un archivo .txt para analizar.");
+    throw new Error("Pega el texto del alumno o sube un archivo PDF, DOCX o .txt para analizar.");
   }
   const file = state.selectedFile;
-  const isTextFile = file.type.startsWith("text/") || /\.(txt|md|csv)$/i.test(file.name);
-  if (!isTextFile) {
-    throw new Error("Para este MVP conectado a GPT usa texto pegado o archivo .txt. PDF/DOCX requieren una capa extra de extracción.");
+  if (file.size > 4 * 1024 * 1024) {
+    throw new Error("Para este MVP usa archivos de máximo 4 MB.");
   }
-  const text = await file.text();
-  return { text, sourceName: file.name };
+  const isTextFile = file.type.startsWith("text/") || /\.(txt|md|csv)$/i.test(file.name);
+  if (isTextFile) {
+    const text = await file.text();
+    return { text, sourceName: file.name };
+  }
+  const isSupportedDocument = /\.(pdf|docx)$/i.test(file.name);
+  if (!isSupportedDocument) {
+    throw new Error("Por ahora analiza texto pegado, .txt, PDF o DOCX. JPG/PNG requieren OCR y van en una siguiente mejora.");
+  }
+  const base64 = await fileToBase64(file);
+  return {
+    sourceName: file.name,
+    file: {
+      name: file.name,
+      type: file.type || guessMimeType(file.name),
+      base64,
+    },
+  };
+}
+
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = String(reader.result || "");
+      resolve(result.includes(",") ? result.split(",").pop() : result);
+    };
+    reader.onerror = () => reject(new Error("No se pudo leer el archivo."));
+    reader.readAsDataURL(file);
+  });
+}
+
+function guessMimeType(fileName) {
+  if (/\.pdf$/i.test(fileName)) return "application/pdf";
+  if (/\.docx$/i.test(fileName)) return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+  return "application/octet-stream";
 }
 
 function normalizeAnalysis(result) {

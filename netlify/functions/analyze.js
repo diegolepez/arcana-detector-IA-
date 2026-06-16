@@ -2,6 +2,9 @@ const JSON_HEADERS = {
   "Content-Type": "application/json",
 };
 
+const pdfParse = require("pdf-parse");
+const mammoth = require("mammoth");
+
 const SIGNAL_TONES = {
   alta: "high",
   alto: "high",
@@ -33,22 +36,33 @@ exports.handler = async (event) => {
     return json(400, { error: "Solicitud inválida." });
   }
 
-  const text = String(body.text || "").trim();
+  let text;
+  try {
+    text = await resolveInputText(body);
+  } catch (error) {
+    return json(400, { error: error.message });
+  }
+
   if (text.length < 120) {
     return json(400, { error: "El texto es muy corto. Pega al menos 120 caracteres para analizar." });
   }
 
   const clippedText = text.slice(0, 18000);
   const sourceName = String(body.sourceName || "Trabajo del alumno").slice(0, 140);
-  const model = process.env.OPENAI_MODEL || "gpt-5.5-mini";
+  const model = process.env.OPENAI_MODEL || "gpt-4o-mini";
 
   const requestBody = {
     model,
     input: [
       {
         role: "system",
-        content:
-          "Eres Radar IA de ARCANA. Analizas señales estadísticas y lingüísticas asociadas a posible escritura asistida por IA en trabajos escolares. No acusas, no emites veredictos, no afirmas que el alumno usó IA. Respondes solo con JSON válido en español.",
+        content: [
+          "Eres Radar IA de ARCANA. Analizas señales lingüísticas asociadas a posible escritura asistida por IA en trabajos escolares.",
+          "No acusas, no emites veredictos, no afirmas que el alumno usó IA. Respondes solo con JSON válido en español.",
+          "Sé más sensible que conservador cuando el texto tenga estilo enciclopédico, estructura demasiado uniforme, tono impersonal, ausencia de voz propia, poca variación sintáctica, transiciones muy pulidas o falta de detalles personales del alumno.",
+          "Calibra la puntuación así: 0-20 = señales bajas con voz personal clara; 25-45 = señales leves o mixtas; 50-70 = varias señales moderadas como tono genérico, informativo y poco personal; 75-100 = señales altas por estilo muy uniforme, genérico y altamente pulido.",
+          "La puntuación sigue siendo una señal de revisión, no una prueba definitiva.",
+        ].join(" "),
       },
       {
         role: "user",
@@ -56,6 +70,8 @@ exports.handler = async (event) => {
           `Fuente: ${sourceName}`,
           "",
           "Analiza este texto como señal orientativa para un docente. Devuelve una puntuación de 0 a 100 de presencia de patrones asociados al uso de IA, no de autoría definitiva.",
+          "Si el texto es principalmente expositivo/enciclopédico, muy correcto, sin ejemplos personales y con tono homogéneo, no lo dejes en rango bajo solo porque sea coherente: clasifícalo al menos como señal moderada si acumula varias señales.",
+          "Usa lenguaje responsable: patrones, señales, posible escritura asistida, punto de partida para conversar.",
           "",
           clippedText,
         ].join("\n"),
@@ -142,6 +158,46 @@ exports.handler = async (event) => {
     return json(500, { error: error.message || "Error inesperado al analizar el texto." });
   }
 };
+
+async function resolveInputText(body) {
+  const pastedText = String(body.text || "").trim();
+  if (pastedText) return pastedText;
+
+  if (!body.file || !body.file.base64) {
+    throw new Error("Pega texto o sube un archivo PDF, DOCX o .txt.");
+  }
+
+  const fileName = String(body.file.name || "").toLowerCase();
+  const buffer = Buffer.from(String(body.file.base64), "base64");
+
+  if (buffer.length > 4 * 1024 * 1024) {
+    throw new Error("Para este MVP usa archivos de máximo 4 MB.");
+  }
+
+  if (fileName.endsWith(".pdf")) {
+    const parsed = await pdfParse(buffer);
+    const text = String(parsed.text || "").trim();
+    if (!text) {
+      throw new Error("No pude extraer texto del PDF. Si es escaneado como imagen, necesitará OCR.");
+    }
+    return text;
+  }
+
+  if (fileName.endsWith(".docx")) {
+    const parsed = await mammoth.extractRawText({ buffer });
+    const text = String(parsed.value || "").trim();
+    if (!text) {
+      throw new Error("No pude extraer texto del DOCX.");
+    }
+    return text;
+  }
+
+  if (/\.(txt|md|csv)$/i.test(fileName)) {
+    return buffer.toString("utf8").trim();
+  }
+
+  throw new Error("Formato no soportado todavía. Usa PDF, DOCX, .txt o texto pegado.");
+}
 
 function extractOutputText(data) {
   if (data.output_text) return data.output_text;

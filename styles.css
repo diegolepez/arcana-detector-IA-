@@ -779,14 +779,26 @@ textarea:focus-visible {
   gap: 17px;
 }
 
-.score-line > strong {
+.score-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.score-stack small {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.score-stack > strong {
   color: var(--amber);
   font-size: clamp(48px, 4.5vw, 64px);
   letter-spacing: -4px;
   line-height: 0.9;
 }
 
-.score-line > strong span {
+.score-stack > strong span {
   font-size: 0.55em;
   letter-spacing: -2px;
 }
@@ -1685,7 +1697,7 @@ textarea:focus-visible {
     display: block;
   }
 
-  .mobile-card .score-line > strong {
+  .mobile-card .score-stack > strong {
     font-size: 58px;
   }
 

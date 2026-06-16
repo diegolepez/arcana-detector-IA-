@@ -20,11 +20,13 @@ Con `python3 -m http.server` verás la interfaz, pero el análisis GPT solo func
 2. Sube esta carpeta o conecta el repo.
 3. En Site configuration > Environment variables agrega:
    - `OPENAI_API_KEY`: tu API key de OpenAI.
-   - `OPENAI_MODEL`: opcional. Por defecto usa `gpt-5.5-mini`.
+   - `OPENAI_MODEL`: opcional. Por defecto usa `gpt-4o-mini`.
 4. Deploy.
 
 La ruta `/api/analyze` queda conectada a `netlify/functions/analyze.js`.
 
 ## MVP actual
 
-Analiza texto pegado o archivos `.txt`. PDF/DOCX requieren una capa extra de extracción de texto antes de enviarlos a GPT.
+Analiza texto pegado, archivos `.txt`, PDF con texto seleccionable y DOCX.
+
+Los PDF escaneados como imagen todavía requieren OCR. JPG/PNG, MP3 y MP4 quedan para una siguiente mejora.
