@@ -133,7 +133,7 @@ exports.handler = async (event) => {
         },
       },
     },
-    max_output_tokens: 1800,
+    max_output_tokens: 3200,
   };
 
   try {
@@ -151,8 +151,7 @@ exports.handler = async (event) => {
       return json(response.status, { error: data.error?.message || "OpenAI no pudo completar el análisis." });
     }
 
-    const outputText = extractOutputText(data);
-    const analysis = normalizeAnalysis(JSON.parse(outputText));
+    const analysis = normalizeAnalysis(parseAnalysisOutput(data));
     return json(200, { analysis });
   } catch (error) {
     return json(500, { error: error.message || "Error inesperado al analizar el texto." });
@@ -208,6 +207,63 @@ function extractOutputText(data) {
     }
   }
   return chunks.join("");
+}
+
+function parseAnalysisOutput(data) {
+  const outputText = extractOutputText(data).trim();
+  if (!outputText) {
+    throw new Error("OpenAI no devolvió contenido para analizar.");
+  }
+
+  try {
+    return JSON.parse(outputText);
+  } catch {
+    const jsonText = extractBalancedJson(outputText);
+    if (jsonText) {
+      return JSON.parse(jsonText);
+    }
+  }
+
+  throw new Error("OpenAI devolvió una respuesta incompleta. Intenta de nuevo o usa un archivo más corto.");
+}
+
+function extractBalancedJson(text) {
+  const start = text.indexOf("{");
+  if (start === -1) return "";
+
+  let depth = 0;
+  let inString = false;
+  let escaped = false;
+
+  for (let index = start; index < text.length; index += 1) {
+    const char = text[index];
+
+    if (escaped) {
+      escaped = false;
+      continue;
+    }
+
+    if (char === "\\") {
+      escaped = true;
+      continue;
+    }
+
+    if (char === '"') {
+      inString = !inString;
+      continue;
+    }
+
+    if (inString) continue;
+
+    if (char === "{") depth += 1;
+    if (char === "}") depth -= 1;
+
+    if (depth === 0) {
+      return text.slice(start, index + 1);
+    }
+  }
+
+  return "";
 }
 
 function normalizeAnalysis(analysis) {
