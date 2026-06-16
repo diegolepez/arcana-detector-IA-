@@ -29,4 +29,4 @@ La ruta `/api/analyze` queda conectada a `netlify/functions/analyze.js`.
 
 Analiza texto pegado, archivos `.txt`, PDF con texto seleccionable y DOCX.
 
-Los PDF escaneados como imagen todavía requieren OCR. JPG/PNG, MP3 y MP4 quedan para una siguiente mejora.
+Los PDF escaneados como imagen todavía requieren OCR. Si un PDF muestra error de lectura, reexpórtalo o ábrelo y guárdalo como PDF nuevo. JPG/PNG, MP3 y MP4 quedan para una siguiente mejora.

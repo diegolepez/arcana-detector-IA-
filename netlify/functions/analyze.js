@@ -179,7 +179,14 @@ async function resolveInputText(body) {
   }
 
   if (fileName.endsWith(".pdf")) {
-    const parsed = await pdfParse(buffer);
+    let parsed;
+    try {
+      parsed = await pdfParse(buffer);
+    } catch (error) {
+      throw new Error(
+        "No pude leer la estructura interna del PDF. Intenta reexportarlo o abrirlo y guardarlo como PDF nuevo; si es un escaneo, necesitará OCR.",
+      );
+    }
     const text = String(parsed.text || "").trim();
     if (!text) {
       throw new Error("No pude extraer texto del PDF. Si es escaneado como imagen, necesitará OCR.");
@@ -188,7 +195,12 @@ async function resolveInputText(body) {
   }
 
   if (fileName.endsWith(".docx")) {
-    const parsed = await mammoth.extractRawText({ buffer });
+    let parsed;
+    try {
+      parsed = await mammoth.extractRawText({ buffer });
+    } catch (error) {
+      throw new Error("No pude leer el DOCX. Intenta guardarlo de nuevo como .docx o pega el texto directamente.");
+    }
     const text = String(parsed.value || "").trim();
     if (!text) {
       throw new Error("No pude extraer texto del DOCX.");
