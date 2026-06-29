@@ -16,6 +16,19 @@ const SIGNAL_TONES = {
   bajo: "moderate",
 };
 
+const FALLBACK_RECOMMENDATIONS = [
+  "Revisar entregas anteriores para identificar cambios en el estilo de escritura.",
+  "Solicitar borradores, fuentes o apuntes que muestren el proceso de elaboración.",
+  "Conversar con el alumno sobre las decisiones que tomó al organizar el texto.",
+  "Pedir ejemplos personales o conexiones con el trabajo realizado en clase.",
+  "Usar el análisis como punto de partida, no como prueba definitiva.",
+];
+
+const TECHNICAL_ARTIFACT_PATTERN =
+  /(MONITOR_LOG|beginSneakAssistant|endOfAssistant|computeCodeExecution|monitorEvent|popup_id|sender_return|assistant|begin code|end code|encode|decode|```|<script|function\s*\(|\{|\})/i;
+const UUID_PATTERN = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i;
+const NON_SPANISH_SCRIPT_PATTERN = /[\u0370-\u03ff\u0400-\u04ff]/;
+
 exports.handler = async (event) => {
   if (event.httpMethod === "OPTIONS") {
     return { statusCode: 204, headers: JSON_HEADERS, body: "" };
@@ -65,6 +78,7 @@ exports.handler = async (event) => {
           "Calibra el porcentaje así: 0-20 = pocas señales y fuerte voz personal; 21-40 = señales leves o texto mixto con rasgos humanos claros; 41-60 = señales moderadas, varias partes genéricas o uniformes; 61-80 = señales altas, estilo muy pulido/impersonal y poca huella personal; 81-100 = señales muy altas, texto altamente uniforme, genérico, pulido y sin evidencias de proceso personal.",
           "Para textos informativos o históricos, no penalices solo por ser factual; pero si además son impersonales, enciclopédicos, homogéneos y sin voz del estudiante, ubícalos normalmente en rango moderado o alto.",
           "Si no hay suficiente evidencia, baja la confianza y explica el riesgo de falso positivo. Aun con porcentaje alto, recuerda que no constituye prueba definitiva.",
+          "Las recomendaciones deben estar en español natural para docentes. Nunca incluyas código, identificadores internos, UUIDs, logs, tokens de herramientas, trazas de sistema ni texto técnico ajeno al análisis pedagógico.",
           "Responde exclusivamente con JSON válido que cumpla el esquema. No agregues markdown ni texto fuera del JSON.",
         ].join(" "),
       },
@@ -76,7 +90,7 @@ exports.handler = async (event) => {
           "Analiza este trabajo como señal orientativa para un docente. Devuelve una puntuación de 0 a 100 de presencia de patrones asociados al uso de IA, no de autoría definitiva.",
           "Primero identifica señales concretas del texto. Después decide el porcentaje usando la rúbrica. Evita porcentajes bajos cuando haya acumulación de tono genérico, uniformidad, falta de voz personal y estilo enciclopédico.",
           "En level usa una frase breve como: 'Patrones bajos asociados al uso de IA', 'Patrones moderados asociados al uso de IA' o 'Patrones altos asociados al uso de IA'.",
-          "En lySummary y description explica señales, no culpas. En recommendations sugiere conversar, comparar con entregas previas y pedir evidencia del proceso.",
+          "En lySummary y description explica señales, no culpas. En recommendations sugiere conversar, comparar con entregas previas y pedir evidencia del proceso. Cada recomendación debe ser una oración breve, útil y sin contenido técnico.",
           "",
           clippedText,
         ].join("\n"),
@@ -317,15 +331,33 @@ function normalizeSignals(signals = []) {
 }
 
 function normalizeList(items = []) {
-  const list = items.map((item) => safeText(item, "")).filter(Boolean).slice(0, 5);
-  while (list.length < 5) {
-    list.push("Usa este análisis como punto de partida para una conversación formativa.");
-  }
-  return list;
+  const list = [];
+  const add = (item) => {
+    const text = safeText(item, "", 260).replace(/^[-•\d.)\s]+/, "");
+    const key = text.toLowerCase();
+    if (isCleanRecommendation(text) && !list.some((existing) => existing.toLowerCase() === key)) {
+      list.push(text);
+    }
+  };
+
+  if (Array.isArray(items)) items.forEach(add);
+  FALLBACK_RECOMMENDATIONS.forEach(add);
+  return list.slice(0, 5);
 }
 
-function safeText(value, fallback) {
-  return String(value || fallback).replace(/\s+/g, " ").trim();
+function isCleanRecommendation(item) {
+  const text = safeText(item, "", 260);
+  if (text.length < 18 || text.length > 260) return false;
+  if (TECHNICAL_ARTIFACT_PATTERN.test(text) || UUID_PATTERN.test(text) || NON_SPANISH_SCRIPT_PATTERN.test(text)) return false;
+  const letters = text.match(/[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]/g) || [];
+  return letters.length >= Math.max(14, text.length * 0.45);
+}
+
+function safeText(value, fallback, maxLength = 420) {
+  const text = String(value || fallback)
+    .replace(/\s+/g, " ")
+    .trim();
+  return text.length > maxLength ? `${text.slice(0, maxLength - 1).trim()}...` : text;
 }
 
 function json(statusCode, body) {

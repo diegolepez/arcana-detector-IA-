@@ -95,6 +95,48 @@ function escapeHTML(value = "") {
   return String(value).replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
 }
 
+const fallbackRecommendations = [
+  "Revisar entregas anteriores para identificar cambios en el estilo de escritura.",
+  "Solicitar borradores, fuentes o apuntes que muestren el proceso de elaboración.",
+  "Conversar con el alumno sobre las decisiones que tomó al organizar el texto.",
+  "Pedir ejemplos personales o conexiones con el trabajo realizado en clase.",
+  "Usar el análisis como punto de partida, no como prueba definitiva.",
+];
+
+const technicalArtifactPattern =
+  /(MONITOR_LOG|beginSneakAssistant|endOfAssistant|computeCodeExecution|monitorEvent|popup_id|sender_return|assistant|begin code|end code|encode|decode|```|<script|function\s*\(|\{|\})/i;
+const uuidPattern = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i;
+const nonSpanishScriptPattern = /[\u0370-\u03ff\u0400-\u04ff]/;
+
+function safePlainText(value, fallback = "", maxLength = 420) {
+  const text = String(value || fallback)
+    .replace(/\s+/g, " ")
+    .trim();
+  return text.length > maxLength ? `${text.slice(0, maxLength - 1).trim()}...` : text;
+}
+
+function isCleanRecommendation(item) {
+  const text = safePlainText(item, "", 260);
+  if (text.length < 18 || text.length > 260) return false;
+  if (technicalArtifactPattern.test(text) || uuidPattern.test(text) || nonSpanishScriptPattern.test(text)) return false;
+  const letters = text.match(/[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]/g) || [];
+  return letters.length >= Math.max(14, text.length * 0.45);
+}
+
+function cleanRecommendationList(items = []) {
+  const list = [];
+  const add = (item) => {
+    const text = safePlainText(item, "", 260).replace(/^[-•\d.)\s]+/, "");
+    const key = text.toLowerCase();
+    if (isCleanRecommendation(text) && !list.some((existing) => existing.toLowerCase() === key)) {
+      list.push(text);
+    }
+  };
+  if (Array.isArray(items)) items.forEach(add);
+  fallbackRecommendations.forEach(add);
+  return list.slice(0, 5);
+}
+
 const iconPaths = {
   home: '<path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/>',
   radar: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/><path d="m14 10 5-5"/>',
@@ -711,9 +753,15 @@ function guessMimeType(fileName) {
 function normalizeAnalysis(result) {
   const merged = { ...defaultAnalysis, ...result };
   merged.percentage = Math.max(0, Math.min(100, Number(merged.percentage) || 0));
+  merged.level = safePlainText(merged.level, defaultAnalysis.level, 110);
+  merged.severity = safePlainText(merged.severity, defaultAnalysis.severity, 40);
+  merged.description = safePlainText(merged.description, defaultAnalysis.description, 520);
+  merged.confidence = safePlainText(merged.confidence, defaultAnalysis.confidence, 40);
+  merged.falsePositiveRisk = safePlainText(merged.falsePositiveRisk, defaultAnalysis.falsePositiveRisk, 120);
+  merged.lySummary = safePlainText(merged.lySummary, defaultAnalysis.lySummary, 420);
+  merged.lyRecommendation = safePlainText(merged.lyRecommendation, defaultAnalysis.lyRecommendation, 420);
   merged.signals = Array.isArray(merged.signals) && merged.signals.length ? merged.signals.slice(0, 5) : defaultAnalysis.signals;
-  merged.recommendations =
-    Array.isArray(merged.recommendations) && merged.recommendations.length ? merged.recommendations.slice(0, 5) : defaultAnalysis.recommendations;
+  merged.recommendations = cleanRecommendationList(merged.recommendations);
   return merged;
 }
 

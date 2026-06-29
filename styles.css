@@ -822,7 +822,7 @@ textarea:focus-visible {
 
 .result-metrics {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   margin-top: auto;
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--border) 65%, transparent);
@@ -839,15 +839,17 @@ textarea:focus-visible {
 }
 
 .result-metrics > div + div {
-  border-left: 1px solid var(--border);
+  border-top: 1px solid var(--border);
 }
 
 .result-metrics p {
   display: flex;
   flex-direction: column;
+  min-width: 0;
   margin: 0;
   font-size: 13px;
   line-height: 1.5;
+  overflow-wrap: anywhere;
 }
 
 .result-metrics strong {
@@ -1162,6 +1164,7 @@ textarea:focus-visible {
   margin: 0;
   font-size: 13px;
   line-height: 1.35;
+  overflow-wrap: anywhere;
 }
 
 .recommendation-list p > span {
@@ -1964,6 +1967,10 @@ textarea:focus-visible {
 }
 
 @media print {
+  @page {
+    margin: 10mm;
+  }
+
   :root {
     color-scheme: light;
     --bg: #fff;
@@ -1971,6 +1978,18 @@ textarea:focus-visible {
     --text: #0b1739;
     --muted: #53617c;
     --border: #d9e1ed;
+  }
+
+  html,
+  body,
+  #app,
+  .desktop-app,
+  .workspace,
+  .dashboard {
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    background: #fff !important;
   }
 
   .sidebar,
@@ -1995,23 +2014,65 @@ textarea:focus-visible {
     padding: 0;
   }
 
+  .tool-heading {
+    margin-bottom: 10px;
+  }
+
+  .dashboard-grid {
+    gap: 10px;
+  }
+
   .top-grid,
   .bottom-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    align-items: start;
   }
 
-  .top-grid .result-card {
-    grid-column: 1;
+  .top-grid {
+    grid-template-columns: 1fr;
   }
 
+  .top-grid .result-card,
   .top-grid .ly-summary {
-    grid-column: 2;
+    grid-column: auto;
+    min-height: 0;
+  }
+
+  .top-grid > .card,
+  .bottom-grid > .card,
+  .ly-summary,
+  .recommendations-card,
+  .signals-card,
+  .info-card {
+    min-height: 0 !important;
+  }
+
+  .result-content {
+    height: auto;
+  }
+
+  .result-metrics {
+    grid-template-columns: 1fr;
+    margin-top: 18px;
+    overflow: visible;
+  }
+
+  .result-metrics > div + div {
+    border-top: 1px solid var(--border);
+    border-left: 0;
   }
 
   .card,
   .bottom-banner {
     break-inside: avoid;
+    overflow: visible;
     box-shadow: none;
+  }
+
+  .bottom-banner {
+    min-height: 0;
+    margin-top: 10px;
+    padding: 10px 14px;
   }
 }
