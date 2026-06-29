@@ -147,11 +147,6 @@ const iconPaths = {
   star: '<path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8-6.2-3.2L5.8 21 7 14.2 2 9.3l6.9-1z"/>',
   shield: '<path d="M12 2 20 5v6c0 5-3.4 9.2-8 11-4.6-1.8-8-6-8-11V5z"/><path d="m9 12 2 2 4-5"/>',
   settings: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.6v-.2h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1z"/>',
-  calendar: '<path d="M8 2v4M16 2v4"/><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/>',
-  pencil: '<path d="M18 2 22 6 8 20H4v-4z"/><path d="m15 5 4 4"/>',
-  help: '<circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.7 2.7 0 0 1 5 1.5c0 2-2.5 2.1-2.5 4"/><path d="M12 18h.01"/>',
-  users: '<path d="M16 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9.5" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9"/><path d="M16 3.1a4 4 0 0 1 0 7.8"/>',
-  layers: '<path d="m12 2 9 5-9 5-9-5z"/><path d="m3 12 9 5 9-5"/><path d="m3 17 9 5 9-5"/>',
   bell: '<path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/>',
   info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/>',
   upload: '<path d="M12 16V4"/><path d="m7 9 5-5 5 5"/><path d="M4 14v6h16v-6"/>',
@@ -199,18 +194,13 @@ function Sidebar() {
     ["file", "Exámenes y rúbricas"],
     ["book", "Biblioteca de prompts"],
     ["message", "Comentarios para boletas"],
+  ];
+  const secondary = [
     ["clock", "Historial"],
     ["star", "Favoritos"],
     ["shield", "Guía de uso ético"],
-    ["calendar", "Planeador de clase"],
-    ["pencil", "Generador de actividades"],
-    ["help", "Banco de preguntas"],
-    ["users", "Adaptador por nivel"],
-    ["book", "Guía de estudio"],
-    ["layers", "Secuencia didáctica"],
-    ["chat", "Retroalimentación rápida"],
+    ["settings", "Configuración"],
   ];
-  const secondary = [["settings", "Configuración"]];
   const item = ([icon, label]) => `
     <button class="nav-item ${label === "Radar IA" ? "active" : ""}" type="button">
       ${Icon(icon)}
@@ -220,11 +210,9 @@ function Sidebar() {
   return `
     <aside class="sidebar">
       <div class="brand">${Logo()}</div>
-      <div class="sidebar-scroll">
-        <nav class="primary-nav" aria-label="Navegación principal">${primary.map(item).join("")}</nav>
-      </div>
-      ${LyAssistantCard()}
+      <nav class="primary-nav" aria-label="Navegación principal">${primary.map(item).join("")}</nav>
       <nav class="secondary-nav" aria-label="Navegación secundaria">${secondary.map(item).join("")}</nav>
+      ${LyAssistantCard()}
     </aside>
   `;
 }
@@ -270,11 +258,11 @@ function ToolHeading() {
 
 function FileFormatIcon(format) {
   const className = format.toLowerCase();
-  return `<div class="format-item"><span class="format-icon ${className}">▤</span><small>${format}</small></div>`;
+  return `<div class="format-item"><span class="format-icon ${className}">${format === "JPG" || format === "PNG" ? "▧" : format === "MP3" ? "♫" : format === "MP4" ? "▶" : "▤"}</span><small>${format}</small></div>`;
 }
 
 function UploadCard(mobile = false) {
-  const formats = ["PDF", "DOCX", "TXT"];
+  const formats = ["PDF", "DOCX", "TXT", "PPT", "PPTX", "JPG", "PNG", "MP3", "MP4"];
   const fileLabel = state.selectedFile ? state.selectedFile.name : "Arrastra el archivo aquí";
   const statusText =
     state.analysisStatus === "running"
@@ -287,7 +275,7 @@ function UploadCard(mobile = false) {
       <div class="card-title-row">
         ${mobile ? "" : StepBadge(1)}
         <div><h2 id="upload-title">${mobile ? "Sube el trabajo del alumno" : "Sube o arrastra el trabajo del alumno"}</h2>
-        <p>Extraemos el contenido del documento y lo analizamos.</p></div>
+        <p>Aceptamos múltiples formatos. Extraemos el contenido y lo analizamos.</p></div>
       </div>
       <div class="dropzone ${state.isDragging ? "dragging" : ""} ${state.selectedFile ? "has-file" : ""}" data-dropzone>
         <div class="upload-orb">${Icon(state.selectedFile ? "check" : "upload")}</div>
@@ -312,10 +300,10 @@ function UploadCard(mobile = false) {
           : `<div class="mini-process">
               <div>${Icon("upload")}<span><b>1.</b> Extraemos<br />el contenido</span></div>
               <div>${Icon("sun")}<span><b>2.</b> Analizamos<br />patrones</span></div>
-              <div>${Icon("shield")}<span><b>3.</b> Señal<br />responsable</span></div>
+              <div>${Icon("shield")}<span><b>3.</b> Damos una señal<br />responsable</span></div>
             </div>`
       }
-      <p class="microcopy">${Icon("shield")} La precisión depende de la calidad del texto extraído y del documento original.</p>
+      <p class="microcopy">${Icon("shield")} La precisión depende de la calidad del texto extraído, audio, imagen o documento original.</p>
       ${state.analysisError ? `<p class="analysis-error">${Icon("info")} ${escapeHTML(state.analysisError)}</p>` : ""}
       ${
         mobile
@@ -356,12 +344,12 @@ function ResultCard(mobile = false) {
         <div class="result-copy">
           <div class="score-line"><div class="score-stack"><small>Nivel de señales</small><strong>${analysis.percentage}<span>%</span></strong></div><p>${levelText} ${Icon("info", "inline-info")}</p></div>
           <p class="result-description">${escapeHTML(analysis.description)}</p>
+          <div class="result-metrics">
+            <div><span class="metric-icon">${Icon("shield")}</span><p>Confianza del análisis<strong>${escapeHTML(analysis.confidence)}</strong></p></div>
+            <div><p>Riesgo de falso positivo<strong>${escapeHTML(analysis.falsePositiveRisk)}</strong></p>${Icon("info", "inline-info")}</div>
+          </div>
         </div>
         ${VerticalAIMeter()}
-        <div class="result-metrics">
-          <div><span class="metric-icon">${Icon("shield")}</span><p>Confianza del análisis<strong>${escapeHTML(analysis.confidence)}</strong></p></div>
-          <div><p>Riesgo de falso positivo<strong>${escapeHTML(analysis.falsePositiveRisk)}</strong></p>${Icon("info", "inline-info")}</div>
-        </div>
       </div>
     </section>
   `;
@@ -430,7 +418,7 @@ function DetectedSignalsCard(mobile = false) {
           )
           .join("")}
       </div>
-      <div class="highlight-soon">${Icon("eye")}<span>Vista de resaltados próximamente</span></div>
+      <button class="outline-button full" type="button" data-action="view-text">${Icon("eye")}<span>${mobile ? "Ver texto analizado" : "Ver texto analizado con resaltados"}</span>${Icon("chevron")}</button>
     </section>
   `;
 }
@@ -662,6 +650,9 @@ function bindEvents() {
       if (action === "download") {
         window.print();
       }
+      if (action === "view-text") {
+        element.querySelector("span").textContent = "Vista de resaltados preparada";
+      }
     });
   });
 
@@ -728,7 +719,7 @@ async function getTextForAnalysis() {
   }
   const isSupportedDocument = /\.(pdf|docx)$/i.test(file.name);
   if (!isSupportedDocument) {
-    throw new Error("Por ahora analiza texto pegado, .txt, PDF o DOCX. Otros formatos van en una siguiente mejora.");
+    throw new Error("Por ahora analiza texto pegado, .txt, PDF o DOCX. JPG/PNG requieren OCR y van en una siguiente mejora.");
   }
   const base64 = await fileToBase64(file);
   return {

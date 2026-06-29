@@ -53,13 +53,11 @@
 
 html {
   background: var(--bg);
-  overflow-x: hidden;
   scroll-behavior: smooth;
 }
 
 body {
   min-width: 320px;
-  overflow-x: hidden;
   margin: 0;
   background:
     radial-gradient(circle at 65% -20%, rgba(22, 93, 255, 0.055), transparent 35%),
@@ -109,7 +107,7 @@ textarea:focus-visible {
 
 .desktop-app {
   display: grid;
-  grid-template-columns: 252px minmax(0, 1fr);
+  grid-template-columns: 230px minmax(0, 1fr);
   min-height: 100vh;
 }
 
@@ -120,7 +118,6 @@ textarea:focus-visible {
   display: flex;
   height: 100vh;
   flex-direction: column;
-  overflow-y: auto;
   padding: 22px 14px 15px;
   border-right: 1px solid var(--border);
   background: var(--sidebar);
@@ -179,16 +176,9 @@ textarea:focus-visible {
   gap: 6px;
 }
 
-.sidebar-scroll {
-  min-height: 0;
-  flex: 1 1 auto;
-  overflow-y: auto;
-  padding-right: 3px;
-}
-
 .secondary-nav {
-  flex: 0 0 auto;
-  margin-top: 10px;
+  margin-top: 6px;
+  margin-bottom: 14px;
 }
 
 .nav-item {
@@ -246,9 +236,8 @@ textarea:focus-visible {
   display: grid;
   grid-template-columns: 55px 1fr;
   align-items: center;
-  flex: 0 0 auto;
-  margin-top: 12px;
-  min-height: 88px;
+  margin-top: auto;
+  min-height: 96px;
   overflow: hidden;
   padding: 11px 10px;
   border: 1px solid var(--border);
@@ -444,8 +433,7 @@ textarea:focus-visible {
 }
 
 .top-grid {
-  align-items: start;
-  grid-template-columns: minmax(320px, 1fr) minmax(440px, 1.45fr) minmax(280px, 0.85fr);
+  grid-template-columns: minmax(330px, 1.05fr) minmax(390px, 1.2fr) minmax(300px, 0.92fr);
 }
 
 .bottom-grid {
@@ -464,10 +452,6 @@ textarea:focus-visible {
 }
 
 .top-grid > .card {
-  min-height: 0;
-}
-
-.upload-card {
   min-height: 405px;
 }
 
@@ -639,7 +623,6 @@ textarea:focus-visible {
 
 .formats {
   margin-top: 10px;
-  text-align: center;
 }
 
 .section-label {
@@ -651,13 +634,13 @@ textarea:focus-visible {
 .format-list {
   display: flex;
   align-items: flex-start;
-  justify-content: center;
-  gap: 20px;
+  justify-content: space-between;
+  gap: 3px;
 }
 
 .format-item {
   display: flex;
-  min-width: 0;
+  min-width: 25px;
   flex-direction: column;
   align-items: center;
   gap: 3px;
@@ -717,13 +700,11 @@ textarea:focus-visible {
 
 .mini-process > div {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 5px;
-  min-height: 68px;
-  padding: 10px 7px;
-  text-align: center;
+  gap: 8px;
+  min-height: 51px;
+  padding: 7px;
 }
 
 .mini-process > div + div {
@@ -737,15 +718,14 @@ textarea:focus-visible {
 
 .mini-process span {
   font-size: 13px;
-  line-height: 1.35;
-  overflow-wrap: normal;
+  line-height: 1.45;
 }
 
 .microcopy {
   display: flex;
-  align-items: flex-start;
-  gap: 7px;
-  margin: 12px 0 0;
+  align-items: center;
+  gap: 5px;
+  margin: 10px 0 0;
   color: var(--muted);
   font-size: 13px;
   line-height: 1.4;
@@ -781,16 +761,16 @@ textarea:focus-visible {
 
 .result-content {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 132px;
-  grid-template-rows: auto auto;
-  height: auto;
-  gap: 14px;
+  grid-template-columns: minmax(0, 1.05fr) minmax(158px, 0.9fr);
+  height: calc(100% - 30px);
+  gap: 7px;
 }
 
 .result-copy {
-  display: block;
+  display: flex;
   min-width: 0;
-  padding-top: 18px;
+  flex-direction: column;
+  padding-top: 22px;
 }
 
 .score-line {
@@ -834,7 +814,7 @@ textarea:focus-visible {
 }
 
 .result-description {
-  margin: 28px 0 0;
+  margin: 32px 0 0;
   color: var(--muted);
   font-size: 13px;
   line-height: 1.75;
@@ -842,10 +822,8 @@ textarea:focus-visible {
 
 .result-metrics {
   display: grid;
-  grid-column: 1 / -1;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  align-self: start;
-  margin-top: 6px;
+  grid-template-columns: 1fr;
+  margin-top: auto;
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--border) 65%, transparent);
   border-radius: 13px;
@@ -854,15 +832,14 @@ textarea:focus-visible {
 
 .result-metrics > div {
   display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  min-height: 74px;
-  padding: 12px;
+  align-items: center;
+  gap: 8px;
+  min-height: 59px;
+  padding: 9px;
 }
 
 .result-metrics > div + div {
-  border-top: 0;
-  border-left: 1px solid var(--border);
+  border-top: 1px solid var(--border);
 }
 
 .result-metrics p {
@@ -881,8 +858,8 @@ textarea:focus-visible {
 
 .metric-icon {
   display: grid;
-  width: 34px;
-  height: 34px;
+  width: 38px;
+  height: 38px;
   flex: 0 0 auto;
   place-items: center;
   border-radius: 50%;
@@ -892,9 +869,9 @@ textarea:focus-visible {
 
 .meter-wrap {
   display: grid;
-  grid-template-columns: 42px minmax(76px, 1fr);
-  gap: 5px;
-  padding: 18px 0 0;
+  grid-template-columns: 52px minmax(93px, 1fr);
+  gap: 6px;
+  padding: 18px 0 6px;
 }
 
 .meter-scale {
@@ -904,7 +881,7 @@ textarea:focus-visible {
 
 .meter-bar {
   position: relative;
-  width: 30px;
+  width: 36px;
   height: 260px;
   border: 4px solid color-mix(in srgb, var(--card) 80%, #d9e2ef);
   border-radius: 22px;
@@ -955,7 +932,7 @@ textarea:focus-visible {
 
 .meter-label span {
   margin-top: 8px;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.5;
 }
 
@@ -1010,8 +987,8 @@ textarea:focus-visible {
   position: absolute;
   top: 18px;
   right: 14px;
-  width: 72px;
-  height: 84px;
+  width: 96px;
+  height: 108px;
   object-fit: contain;
   object-position: center 25%;
   filter: drop-shadow(0 8px 10px rgba(19, 61, 125, 0.18));
@@ -1020,7 +997,7 @@ textarea:focus-visible {
 .ly-summary-copy {
   flex: 1;
   margin-top: 27px;
-  padding: 24px 88px 18px 16px;
+  padding: 24px 116px 18px 16px;
   border-radius: 13px;
   background: linear-gradient(145deg, var(--card-soft), color-mix(in srgb, var(--card-soft) 75%, var(--blue-soft)));
 }
@@ -1154,26 +1131,6 @@ textarea:focus-visible {
 
 .outline-button.full .icon {
   width: 18px;
-}
-
-.highlight-soon {
-  display: flex;
-  min-height: 35px;
-  align-items: center;
-  gap: 9px;
-  margin-top: 8px;
-  padding: 7px 10px;
-  border: 1px dashed color-mix(in srgb, var(--blue) 52%, var(--border));
-  border-radius: 9px;
-  background: color-mix(in srgb, var(--blue-soft) 55%, transparent);
-  color: var(--muted);
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.highlight-soon .icon {
-  width: 17px;
-  color: var(--blue);
 }
 
 .green-title {
@@ -1468,7 +1425,7 @@ textarea:focus-visible {
 
 @media (max-width: 1240px) {
   .desktop-app {
-    grid-template-columns: 235px minmax(0, 1fr);
+    grid-template-columns: 210px minmax(0, 1fr);
   }
 
   .top-grid {
@@ -1680,7 +1637,7 @@ textarea:focus-visible {
 
   .mobile-card .format-list {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(5, 1fr);
     row-gap: 10px;
   }
 
@@ -1759,7 +1716,6 @@ textarea:focus-visible {
   }
 
   .mobile-card .result-metrics {
-    grid-column: 1 / -1;
     grid-template-columns: 1fr;
     margin-top: 20px;
   }
@@ -1790,13 +1746,13 @@ textarea:focus-visible {
   .mobile-card .ly-summary-avatar {
     top: 30px;
     right: 10px;
-    width: 74px;
-    height: 86px;
+    width: 115px;
+    height: 126px;
   }
 
   .mobile-card .ly-summary-copy {
-    margin-top: 48px;
-    padding: 28px 18px 20px;
+    margin-top: 70px;
+    padding: 35px 18px 20px;
   }
 
   .mobile-card .ly-summary-copy p {
@@ -1883,16 +1839,15 @@ textarea:focus-visible {
   .wizard-actions {
     position: fixed;
     z-index: 25;
-    right: 0;
-    left: 0;
+    right: 50%;
     bottom: 68px;
-    width: 100%;
-    max-width: 600px;
-    margin-inline: auto;
+    width: min(600px, 100%);
+    transform: translateX(50%);
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
+    margin: 0;
     padding: 10px 16px;
     border-top: 1px solid var(--border);
     background: color-mix(in srgb, var(--sidebar) 96%, transparent);
@@ -2041,12 +1996,8 @@ textarea:focus-visible {
   .topbar,
   .upload-card,
   .how-button,
-  .outline-button,
-  .download-button,
-  .highlight-soon,
   .wizard-actions,
   .mobile-bottom-nav,
-  .meter-wrap,
   .modal-backdrop {
     display: none !important;
   }
@@ -2068,13 +2019,14 @@ textarea:focus-visible {
   }
 
   .dashboard-grid {
-    display: block;
-    gap: 0;
+    gap: 10px;
   }
 
   .top-grid,
   .bottom-grid {
-    display: block;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
   }
 
   .top-grid {
@@ -2094,117 +2046,28 @@ textarea:focus-visible {
   .signals-card,
   .info-card {
     min-height: 0 !important;
-    margin-top: 12px;
   }
 
   .result-content {
-    display: block;
     height: auto;
   }
 
-  .result-copy {
-    display: block;
-    padding-top: 8px;
-  }
-
-  .score-line {
-    align-items: flex-start;
-  }
-
-  .score-stack > strong,
-  .score-stack > strong span {
-    letter-spacing: 0;
-  }
-
-  .result-description,
-  .ly-summary-copy p,
-  .signal-item p,
-  .recommendation-list p,
-  .responsible-notice p,
-  .info-list strong {
-    display: block;
-    max-height: none !important;
-    overflow: visible !important;
-    text-overflow: clip !important;
-    white-space: normal !important;
-  }
-
   .result-metrics {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     margin-top: 18px;
-    border: 0;
-    background: transparent;
     overflow: visible;
   }
 
-  .result-metrics > div {
-    min-height: 0;
-    padding: 0 12px 0 0;
-  }
-
   .result-metrics > div + div {
-    border-top: 0;
-    border-left: 1px solid var(--border);
-    padding-left: 12px;
+    border-top: 1px solid var(--border);
+    border-left: 0;
   }
 
   .card,
   .bottom-banner {
-    break-inside: auto;
-    page-break-inside: auto;
+    break-inside: avoid;
     overflow: visible;
-    border: 0;
-    border-top: 1px solid var(--border);
-    border-radius: 0;
     box-shadow: none;
-  }
-
-  .card-title-row {
-    align-items: center;
-  }
-
-  .step-badge,
-  .inline-info {
-    display: none !important;
-  }
-
-  .ly-summary::before {
-    display: none;
-  }
-
-  .ly-summary-copy {
-    margin-top: 18px;
-    padding: 8px 116px 8px 0;
-    background: transparent;
-  }
-
-  .signal-item {
-    break-inside: avoid;
-    page-break-inside: avoid;
-  }
-
-  .recommendations-card {
-    break-before: page;
-    page-break-before: always;
-  }
-
-  .recommendation-list p,
-  .responsible-notice,
-  .info-card,
-  .bottom-banner {
-    break-inside: avoid;
-    page-break-inside: avoid;
-  }
-
-  .responsible-notice {
-    border: 0;
-    background: transparent;
-    padding: 0;
-  }
-
-  .info-list > div {
-    grid-template-columns: 22px minmax(120px, 0.8fr) minmax(160px, 1fr);
   }
 
   .bottom-banner {

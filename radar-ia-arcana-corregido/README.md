@@ -10,7 +10,6 @@ El proyecto actual contiene una primera herramienta funcional: **Radar IA**, un 
 - Backend ligero con Netlify Functions.
 - Integracion con OpenAI desde el backend para no exponer la API key en el navegador.
 - Soporte actual para texto pegado, `.txt`, `.md`, `.csv`, PDF con texto seleccionable y DOCX.
-- El sidebar muestra herramientas adicionales como vision de producto, pero por ahora solo Radar IA tiene flujo funcional.
 - PDF del reporte generado mediante `window.print()` y reglas CSS de impresion.
 - OCR para imagenes, audio, video y otros formatos: pendiente de implementar.
 

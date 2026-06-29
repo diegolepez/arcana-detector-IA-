@@ -77,7 +77,7 @@ Pendiente:
 
 - OCR para PDF escaneado, JPG y PNG.
 - Extraccion de audio/video para MP3/MP4.
-- Soporte real para PPT/PPTX.
+- Soporte real para PPT/PPTX aunque aparezcan como formatos visuales en la UI.
 
 ## Generacion De PDFs
 
