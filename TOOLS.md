@@ -22,7 +22,7 @@ Analizar trabajos de alumnos para detectar señales estadisticas asociadas al us
 - Nivel textual del resultado.
 - Descripcion del analisis.
 - Confianza del analisis.
-- Riesgo de falso positivo.
+- Interpretacion responsable segun las senales del documento.
 - Resumen de Ly.
 - Recomendacion de Ly.
 - Cinco señales detectadas.

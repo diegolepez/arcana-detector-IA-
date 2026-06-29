@@ -78,7 +78,8 @@ const defaultAnalysis = {
   description:
     "El texto presenta patrones comunes en contenido generado o asistido por IA. Este resultado debe tomarse como una señal de revisión, no como una conclusión definitiva.",
   confidence: "Media",
-  falsePositiveRisk: "Posible",
+  falsePositiveRisk:
+    "La señal debe interpretarse junto con el contexto del documento, la evidencia del proceso y una conversación con el alumno.",
   lySummary:
     "Encontré señales moderadas de escritura asistida por IA, especialmente en la estructura, el tono y la falta de ejemplos personales o detalles específicos del alumno.",
   lyRecommendation:
@@ -360,7 +361,7 @@ function ResultCard(mobile = false) {
         ${VerticalAIMeter()}
         <div class="result-metrics">
           <div><span class="metric-icon">${Icon("shield")}</span><p>Confianza del análisis<strong>${escapeHTML(analysis.confidence)}</strong></p></div>
-          <div><p>Riesgo de falso positivo<strong>${escapeHTML(analysis.falsePositiveRisk)}</strong></p>${Icon("info", "inline-info")}</div>
+          <div><p>Interpretación responsable<strong>${escapeHTML(analysis.falsePositiveRisk)}</strong></p>${Icon("info", "inline-info")}</div>
         </div>
       </div>
     </section>
