@@ -766,7 +766,7 @@ function normalizeAnalysis(result) {
   merged.level = safePlainText(merged.level, defaultAnalysis.level, 110);
   merged.severity = safePlainText(merged.severity, defaultAnalysis.severity, 40);
   merged.description = safePlainText(merged.description, defaultAnalysis.description, 520);
-  merged.confidence = safePlainText(merged.confidence, defaultAnalysis.confidence, 40);
+  merged.confidence = safePlainText(merged.confidence, defaultAnalysis.confidence, 260);
   merged.falsePositiveRisk = safePlainText(merged.falsePositiveRisk, defaultAnalysis.falsePositiveRisk, 420);
   merged.lySummary = safePlainText(merged.lySummary, defaultAnalysis.lySummary, 420);
   merged.lyRecommendation = safePlainText(merged.lyRecommendation, defaultAnalysis.lyRecommendation, 420);
