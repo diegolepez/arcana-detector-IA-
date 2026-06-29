@@ -360,7 +360,6 @@ function ResultCard(mobile = false) {
         </div>
         ${VerticalAIMeter()}
         <div class="result-metrics">
-          <div><span class="metric-icon">${Icon("shield")}</span><p>Confianza del análisis<strong>${escapeHTML(analysis.confidence)}</strong></p></div>
           <div><p>Interpretación responsable<strong>${escapeHTML(analysis.falsePositiveRisk)}</strong></p>${Icon("info", "inline-info")}</div>
         </div>
       </div>

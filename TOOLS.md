@@ -21,7 +21,6 @@ Analizar trabajos de alumnos para detectar señales estadisticas asociadas al us
 - Porcentaje de presencia de patrones asociados al uso de IA.
 - Nivel textual del resultado.
 - Descripcion del analisis.
-- Confianza del analisis.
 - Interpretacion responsable segun las senales del documento.
 - Resumen de Ly.
 - Recomendacion de Ly.

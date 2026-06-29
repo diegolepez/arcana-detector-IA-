@@ -843,7 +843,7 @@ textarea:focus-visible {
 .result-metrics {
   display: grid;
   grid-column: 1 / -1;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
   align-self: start;
   margin-top: 6px;
   overflow: hidden;
@@ -861,8 +861,8 @@ textarea:focus-visible {
 }
 
 .result-metrics > div + div {
-  border-top: 0;
-  border-left: 1px solid var(--border);
+  border-top: 1px solid var(--border);
+  border-left: 0;
 }
 
 .result-metrics p {
